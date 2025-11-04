@@ -1,117 +1,87 @@
-#1-masala
-#L = int(input("L = "))
-#L_metr = L // 100
-#print(L_metr)
+import telebot
+from telebot import types
+from pymongo import MongoClient
 
+# --- Bot sozlamalari ---
+TOKEN = "7753018501:AAHsQuLGYRtHTImVvtVTLRRNwcLTz9MWfgc"
+bot = telebot.TeleBot(TOKEN)
 
+# Kanalga obuna bo‘lish shart
+CHANNELS = ["@trent_kinola"]
 
+# --- MongoDB ---
+MONGO_URL = "mongodb+srv://dkenjayev134_db_user:yD6oFqzfSGxHrTwe@cluster0.va0aifh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+client = MongoClient(MONGO_URL)
+db = client["kinochi_bot"]
+collection = db["videos"]
 
+# --- Foydalanuvchini tekshirish ---
+def check_user(user_id):
+    for ch in CHANNELS:
+        try:
+            status = bot.get_chat_member(ch, user_id).status
+            if status in ["left", "kicked"]:
+                return False
+        except Exception as e:
+            print(f"Xatolik: {e}")
+            return False
+    return True
 
-#2-masala
-#M = int(input("M = "))
-#M_tonna = M// 1000
-#print(M_tonna)
+# --- Kanalga post qo‘shilganda saqlash ---
+@bot.channel_post_handler(content_types=["video"])
+def handle_channel_post(message):
+    # ⚠️ Kanal username'ni to‘g‘ri kiriting (without @)
+    if message.chat.username == "trent_kinola":
+        collection.insert_one({
+            "file_id": message.video.file_id,
+            "caption": message.caption
+        })
+        print("✅ Video saqlandi MongoDB'ga!")
+    else:
+        print("❌ Noto‘g‘ri kanal:", message.chat.username)
 
+# --- Obuna so‘rash ---
+def ask_to_subscribe(chat_id):
+    markup = types.InlineKeyboardMarkup()
+    for ch in CHANNELS:
+        markup.add(types.InlineKeyboardButton(text=ch, url=f"https://t.me/{ch[1:]}"))
+    markup.add(types.InlineKeyboardButton("✅ Tekshirish", callback_data="check"))
+    bot.send_message(chat_id, "Botdan foydalanish uchun quyidagi kanallarga obuna bo‘ling 👇", reply_markup=markup)
 
+# --- /start komandasi ---
+@bot.message_handler(commands=["start"])
+def start(message):
+    user_id = message.from_user.id
+    if check_user(user_id):
+        bot.send_message(message.chat.id, "✅ Botdan foydalanishingiz mumkin! Kodni yuboring (masalan: 1234)")
+    else:
+        ask_to_subscribe(message.chat.id)
 
+# --- "Tekshirish" tugmasi ---
+@bot.callback_query_handler(func=lambda call: call.data == "check")
+def check_callback(call):
+    user_id = call.from_user.id
+    if check_user(user_id):
+        bot.send_message(call.message.chat.id, "✅ Obuna tasdiqlandi! Endi kodni yuboring.")
+    else:
+        bot.send_message(call.message.chat.id, "❌ Hali ham barcha kanallarga obuna bo‘lmagansiz!")
 
+# --- Kod yuborilganda video qidirish ---
+@bot.message_handler(func=lambda message: True)
+def all_messages(message):
+    user_id = message.from_user.id
+    if not check_user(user_id):
+        ask_to_subscribe(message.chat.id)
+        return
 
+    if message.text.isdigit():
+        kod = f"Kod: {message.text}"
+        video = collection.find_one({"caption": {"$regex": kod}})
+        if video:
+            bot.send_video(message.chat.id, video["file_id"], caption=video["caption"])
+        else:
+            bot.send_message(message.chat.id, "❌ Bu kod bo‘yicha video topilmadi.")
+    else:
+        bot.send_message(message.chat.id, "❗ Kod raqam ko‘rinishida bo‘lishi kerak (masalan: 1234)")
 
-#3-masala
-#K = int(input("K = "))
-#K_kb = K// 1024
-#print(K_kb)
-
-
-
-
-
-
-#4-masala
-#A = int(input("A = "))
-#B = int(input("B= "))
-#kesma = A // B 
-#print(kesma)
-
-
-
-
-#5-masala
-#A = int(input("A = "))
-#B = int(input("B= "))
-#kesma = A % B 
-#print(kesma)
-
-
-
-
-#6-masala
-#A = int(input("A = "))
-#B = int(input("B = "))
-#on = A//B
-#bir = A%B
-#print(on, bir)
-
-
-
-#7-masala
-#a = int(input("a ="))
-#b = int(input("b ="))
-#d = a + b
-#print(d)
-
-
-
-#8-masala
-#ab = int(input("a ="))
-#son = (ab % 10)*10 + ab //10
-#print(son)
-
-
-
-
-#9-masala
-#B = int(input("Uch honali son kiriting= "))
-#uch =  B//  100
-#print(uch)
-
-
-
-#10-masala
-#n = int(input("Uch xonali son kiriting: "))
-#n = abs(n)
-#unit = n % 10           
-#tens = (n // 10) % 10   
-#print("Birliklar:", unit)
-#print("Ongliklar:", tens)
-
-
-#11-masala
-#A = int(input("A = "))
-#B = int(input("B= "))
-#yig = A+B
-#print(yig)
-
-
-
-
-#12-masala
-#abc = int(input("uch xonali son kiriting"))
-#cba = (abc % 10) * 100 + ((abc // 10) %10) * 10 + abc // 100
-#print(cba)
-
-
-##13-masala
-#son = int(input("3xonali son kiriting = "))
-#natija = (son % 100) * 10 + son // 100
-#print(natija)
-
-
-#14-masala
-#abc = int(input("uch xonali son kiriting"))
-#cba = (abc % 10) * 100 + (abc // 10) 
-#print(cba)
-
-
-
-#15-masala
+bot.polling(none_stop=True)
