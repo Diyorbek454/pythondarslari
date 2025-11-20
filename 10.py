@@ -17,7 +17,7 @@ akam = {
     "shahar": "Toshkent"
 }
 
-# Konsolga chiqarish
+
 print(f"Otamning ismi {otam['ism']}, {otam['tugilgan_yil']}-yilda, {otam['shahar']}da tug'ilgan")
 print(f"Onamning ismi {onam['ism']}, {onam['tugilgan_yil']}-yilda, {onam['shahar']}da tug'ilgan")
 print(f"Akamning ismi {akam['ism']}, {akam['tugilgan_yil']}-yilda, {akam['shahar']}da tug'ilgan\n")
@@ -31,7 +31,7 @@ sevimli_taomlar = {
     "Nilufar": "somsa"
 }
 
-# Kamida uch kishining sevimli taomini chiqarish
+
 print(f"Alining sevimli taomi {sevimli_taomlar['Ali']}")
 print(f"Valining sevimli taomi {sevimli_taomlar['Vali']}")
 print(f"Zarinaning sevimli taomi {sevimli_taomlar['Zarina']}\n")
@@ -50,10 +50,10 @@ python_lugat = {
     "function": "Funktsiya"
 }
 
-# Foydalanuvchidan so'z so'rash
+
 soz = input("Tarjimasini bilmoqchi bo'lgan Python so'zingizni kiriting: ")
 
-# If-else orqali lug'atni tekshirish va natijani chiqarish
+
 if soz in python_lugat:
     print(f"{soz} so'zining tarjimasi: {python_lugat[soz]}")
 else:
