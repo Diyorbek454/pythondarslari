@@ -20,6 +20,10 @@ b = int(input('b = '))
 count = 0
 for i in range(b - 1, a, - 1):
      print(i)
-
+#4 - masala
 count += 1
 print("Soni:", count)
+
+narx = float(input)
+for i in range(1, 11):
+    print(i, 'kg = ', i * narx)
